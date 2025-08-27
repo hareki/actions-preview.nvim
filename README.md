@@ -49,7 +49,7 @@ require("actions-preview").setup {
 
   -- refactoring.nvim integration
   refactoring = {
-    enabled = true, -- default: true
+    enabled = false, -- default
   },
 
   -- priority list of external command to highlight diff

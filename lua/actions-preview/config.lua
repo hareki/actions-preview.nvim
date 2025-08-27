@@ -1,7 +1,7 @@
 local default_config = {
   backend = { "telescope", "minipick", "snacks", "nui" },
   refactoring = {
-    enabled = true,
+    enabled = false,
   },
   telescope = nil,
   nui = {
