@@ -29,6 +29,12 @@ use {
 
 [packer.nvim]: https://github.com/wbthomason/packer.nvim
 
+## Refactoring.nvim Integration
+
+actions-preview.nvim integrates with [refactoring.nvim] to show refactoring actions alongside LSP code actions in a unified interface. This integration is enabled by default.
+
+[refactoring.nvim]: https://github.com/ThePrimeagen/refactoring.nvim
+
 ## Configuration
 
 You can customize preview using setup function if you need it.
@@ -39,6 +45,11 @@ require("actions-preview").setup {
   -- options for vim.diff(): https://neovim.io/doc/user/lua.html#vim.diff()
   diff = {
     ctxlen = 3,
+  },
+
+  -- refactoring.nvim integration
+  refactoring = {
+    enabled = true, -- default: true
   },
 
   -- priority list of external command to highlight diff
