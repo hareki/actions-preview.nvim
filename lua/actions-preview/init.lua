@@ -1,6 +1,7 @@
 local backend = require("actions-preview.backend")
 local config = require("actions-preview.config")
 local Action = require("actions-preview.action").Action
+local RefactoringAction = require("actions-preview.refactoring").RefactoringAction
 
 local M = {}
 
@@ -73,6 +74,23 @@ local function range_from_selection(bufnr, mode)
   }
 end
 
+local function get_refactoring_actions()
+  -- Check if refactoring.nvim is available
+  local ok, refactoring = pcall(require, "refactoring")
+  if not ok then
+    return {}
+  end
+
+  local refactoring_actions = {}
+  local refactors = refactoring.get_refactors()
+
+  for _, refactor_name in ipairs(refactors) do
+    table.insert(refactoring_actions, RefactoringAction.new(refactor_name))
+  end
+
+  return refactoring_actions
+end
+
 local function on_code_action_results(results, opts)
   -- based on https://github.com/neovim/neovim/blob/v0.10.0/runtime/lua/vim/lsp/buf.lua#L705-L731
   local function action_filter(a)
@@ -110,6 +128,15 @@ local function on_code_action_results(results, opts)
       end
     end
   end
+
+  -- Add refactoring actions if enabled
+  if config.refactoring and config.refactoring.enabled then
+    local refactoring_actions = get_refactoring_actions()
+    for _, refactoring_action in ipairs(refactoring_actions) do
+      table.insert(actions, refactoring_action)
+    end
+  end
+
   if #actions == 0 then
     vim.notify("No code actions available", vim.log.levels.INFO)
     return
@@ -182,8 +209,7 @@ function M.code_actions(opts)
       params = vim.lsp.util.make_given_range_params(start, end_, bufnr, client.offset_encoding)
     elseif mode == "v" or mode == "V" then
       local range = range_from_selection(bufnr, mode)
-      params =
-        vim.lsp.util.make_given_range_params(range.start, range["end"], bufnr, client.offset_encoding)
+      params = vim.lsp.util.make_given_range_params(range.start, range["end"], bufnr, client.offset_encoding)
     else
       params = vim.lsp.util.make_range_params(win, client.offset_encoding)
     end

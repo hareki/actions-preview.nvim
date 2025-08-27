@@ -214,12 +214,10 @@ function Action:preview(callback)
         lines = changes:diff(),
       }
     elseif action.command then
-      local command = type(action.command) == "table" and action.command or action
       self.previewed = {
         syntax = "",
         lines = {
-          string.format("Preview is not available for this action (command=%s).", command.command),
-          string.format("This is due to limitations of your language server (%s) implementation.", self:client_name()),
+          "Preview is not available for this action",
         },
       }
     end

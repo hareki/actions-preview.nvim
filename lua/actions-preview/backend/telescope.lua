@@ -138,6 +138,21 @@ function M.select(config, acts)
           self.state.winid = preview_winid
           self.state.bufnr = bufnr
 
+          vim.schedule(function()
+            if vim.api.nvim_buf_is_valid(self.state.bufnr) then
+              vim.api.nvim_buf_call(self.state.bufnr, function()
+                vim.api.nvim_exec_autocmds("User", {
+                  pattern = "TelescopePreviewerLoaded",
+                  data = {
+                    title = entry.preview_title,
+                    bufname = self.state.bufname,
+                    filetype = putils.filetype_detect(self.state.bufname or ""),
+                  },
+                })
+              end)
+            end
+          end)
+
           if do_preview then
             entry.value.action:preview(function(preview)
               if preview and preview.cmdline then
@@ -145,9 +160,9 @@ function M.select(config, acts)
                   term_ids[bufnr] = vim.fn.termopen(preview.cmdline)
                 end)
               else
-                preview = preview or { syntax = "", lines = { "preview not available" } }
+                preview = preview or { syntax = "", lines = { "Preview is not available for this action" } }
 
-                vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, preview.lines)
+                pcall(vim.api.nvim_buf_set_lines, bufnr, 0, -1, false, preview.lines)
                 putils.highlighter(bufnr, preview.syntax, opts)
               end
             end)

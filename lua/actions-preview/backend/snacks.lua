@@ -36,7 +36,7 @@ local preview = function(ctx)
         vim.fn.termopen(preview.cmdline)
       end)
     else
-      preview = preview or { syntax = "", lines = { "preview not available" } }
+      preview = preview or { syntax = "", lines = { "Preview is not available for this action" } }
 
       vim.api.nvim_buf_set_lines(buf_id, 0, -1, false, preview.lines)
       if preview.syntax ~= "" then
