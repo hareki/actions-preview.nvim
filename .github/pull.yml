@@ -1,0 +1,5 @@
+version: "1"
+rules:
+  - base: master
+    upstream: aznhe21:master
+    mergeMethod: merge
